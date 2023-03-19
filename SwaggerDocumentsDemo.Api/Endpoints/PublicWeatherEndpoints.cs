@@ -13,6 +13,7 @@ public static class PublicWeatherEndpoints
     {
         var weatherApi = app
             .MapGroup("weather")
+            .WithGroupName("public")
             .WithTags("Public weather endpoints")
             .WithOpenApi();
 
