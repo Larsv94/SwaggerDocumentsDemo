@@ -6,9 +6,9 @@ public static class SwaggerExtensions
 {
     private static readonly Dictionary<string, SwaggerDoc> docs = new()
     {
-        { "public", new ("My Weather Api - Public endpoints", new string[] { "public" }) },
-        { "private", new ("My Weather Api - Private endpoints", new string[] { "private" }) },
-        { "all", new ("My Weather Api - All endpoints", new string[] { "public", "private" }) }
+        { "public", new ("My Weather Api - Public endpoints", (DocumentData data)=> !data.RequiresAuthorization) },
+        { "private", new ("My Weather Api - Private endpoints", (DocumentData data) => data.RequiresAuthorization) },
+        { "all", new ("My Weather Api - All endpoints", (DocumentData data) => true) }
     };
 
     public static void AddCustomSwagger(this IServiceCollection services)
@@ -21,11 +21,11 @@ public static class SwaggerExtensions
             }
             config.DocInclusionPredicate((docName, description) =>
             {
-                var tags = description.ActionDescriptor.EndpointMetadata.OfType<TagsAttribute>().FirstOrDefault();
+                var documentData = description.ActionDescriptor.EndpointMetadata.OfType<DocumentData>().FirstOrDefault();
                 var doc = docs[docName];
-                if (tags == null) return false;
+                if (documentData == null) return false;
 
-                return doc.Tags.Any(docTag => tags.Tags.Contains(docTag));
+                return doc.Filter(documentData);
             });
         });
     }
@@ -45,5 +45,5 @@ public static class SwaggerExtensions
         }
     }
 
-    private record SwaggerDoc(string Title, string[] Tags);
+    private record SwaggerDoc(string Title, Func<DocumentData, bool> Filter);
 }

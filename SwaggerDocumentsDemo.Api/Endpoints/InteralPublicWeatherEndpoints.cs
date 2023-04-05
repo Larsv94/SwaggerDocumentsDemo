@@ -1,4 +1,5 @@
-﻿using SwaggerDocumentsDemo.Api.Data;
+﻿using SwaggerDocumentsDemo.Api.Config;
+using SwaggerDocumentsDemo.Api.Data;
 using SwaggerDocumentsDemo.Api.Models;
 
 namespace SwaggerDocumentsDemo.Api.Endpoints;
@@ -15,7 +16,7 @@ public static class InteralPublicWeatherEndpoints
     {
         var weatherApi = app
             .MapGroup("internal/weather")
-            .WithTags("private")
+            .WithMetadata(new DocumentData { RequiresAuthorization = true })
             .WithOpenApi();
 
         weatherApi.MapPost("/", AddWeather)
