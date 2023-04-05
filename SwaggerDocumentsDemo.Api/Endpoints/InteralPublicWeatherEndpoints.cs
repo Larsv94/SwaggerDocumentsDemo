@@ -15,8 +15,7 @@ public static class InteralPublicWeatherEndpoints
     {
         var weatherApi = app
             .MapGroup("internal/weather")
-            .WithGroupName("internal")
-            .WithTags("Internal weather endpoints")
+            .WithTags("private")
             .WithOpenApi();
 
         weatherApi.MapPost("/", AddWeather)
